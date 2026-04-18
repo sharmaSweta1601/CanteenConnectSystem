@@ -65,7 +65,14 @@ class PayOutActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Please Enter All The Details", Toast.LENGTH_SHORT).show()
             } else {
-                placeOrder()
+                val isOnline = binding.radioOnline.isChecked
+                if (isOnline) {
+                    Toast.makeText(this, "Processing Online Payment...", Toast.LENGTH_SHORT).show()
+                    // Simulate payment success after a delay or just proceed
+                    placeOrder()
+                } else {
+                    placeOrder()
+                }
             }
 
 

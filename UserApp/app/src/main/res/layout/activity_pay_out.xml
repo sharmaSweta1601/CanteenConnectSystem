@@ -114,11 +114,30 @@
             <TextView
                 android:layout_width="90dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:paddingLeft="8dp"
                 android:text="Payment Method" />
 
+            <RadioGroup
+                android:id="@+id/paymentMethodGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="8dp">
 
+                <RadioButton
+                    android:id="@+id/radioCash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:checked="true"
+                    android:text="Cash" />
+
+                <RadioButton
+                    android:id="@+id/radioOnline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Online" />
+            </RadioGroup>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
