@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this,PendingOrderActivity::class.java)
             startActivity(intent)
         }
+        binding.sendNotificationCard.setOnClickListener {
+            val intent = Intent(this, SendNotificationActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }

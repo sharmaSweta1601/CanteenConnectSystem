@@ -13,40 +13,41 @@ import com.google.firebase.database.DatabaseReference
 class MenuItemAdapter(
     private val context: Context,
     private val menuList: ArrayList<AllMenu>,
-    databaseReference: DatabaseReference
+    private val databaseReference: DatabaseReference
 ) : RecyclerView.Adapter<MenuItemAdapter.AddItemViewHolder>() {
 
-    private val itemQuantities=IntArray(menuList.size){1}
+    private val itemQuantities = MutableList(menuList.size) { 1 }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddItemViewHolder {
-        val binding= ItemItemBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        val binding = ItemItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AddItemViewHolder(binding)
     }
-
 
 
     override fun onBindViewHolder(holder: AddItemViewHolder, position: Int) {
         holder.bind(position)
     }
-    override fun getItemCount(): Int=menuList.size
 
-    inner class AddItemViewHolder(private val binding: ItemItemBinding):RecyclerView.ViewHolder(binding.root) {
+    override fun getItemCount(): Int = menuList.size
+
+    inner class AddItemViewHolder(private val binding: ItemItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(position: Int) {
             binding.apply {
-                val quantity =itemQuantities[position]
-                val menuItem=menuList[position]
-                val uriString=menuItem.foodImage
-                val uri= Uri.parse(uriString)
-                foodnameTextView.text=menuItem.foodName
-                priceTextView.text=menuItem.foodPrice
+                val quantity = itemQuantities[position]
+                val menuItem = menuList[position]
+                val uriString = menuItem.foodImage
+                val uri = Uri.parse(uriString)
+                foodnameTextView.text = menuItem.foodName
+                priceTextView.text = menuItem.foodPrice
                 Glide.with(context).load(uri).into(foodImageView)
-                quantityTextView.text=quantity.toString()
-                minusbutton.setOnClickListener{
+                quantityTextView.text = quantity.toString()
+                minusbutton.setOnClickListener {
                     decreaseQuantitiy(position)
                 }
-                deleteButton.setOnClickListener{
+                deleteButton.setOnClickListener {
                     deleteQuantitiy(position)
                 }
-                plusbutton.setOnClickListener{
+                plusbutton.setOnClickListener {
                     increaseQuantitiy(position)
                 }
 
@@ -54,24 +55,27 @@ class MenuItemAdapter(
         }
 
         private fun increaseQuantitiy(position: Int) {
-           if (itemQuantities[position]<10){
-               itemQuantities[position]++
-               binding.quantityTextView.text=itemQuantities[position].toString()
-
-           }
-        }
-        private fun decreaseQuantitiy(position: Int) {
-            if (itemQuantities[position]>1){
-                itemQuantities[position]--
-                binding.quantityTextView.text=itemQuantities[position].toString()
+            if (itemQuantities[position] < 10) {
+                itemQuantities[position]++
+                binding.quantityTextView.text = itemQuantities[position].toString()
 
             }
         }
+
+        private fun decreaseQuantitiy(position: Int) {
+            if (itemQuantities[position] > 1) {
+                itemQuantities[position]--
+                binding.quantityTextView.text = itemQuantities[position].toString()
+
+            }
+        }
+
         private fun deleteQuantitiy(position: Int) {
             val menuItem = menuList[position]
-            menuItem.key?.let { key ->
+            menuItem.key?.let { key: String ->
                 databaseReference.child("menu").child(key).removeValue().addOnSuccessListener {
                     menuList.removeAt(position)
+                    itemQuantities.removeAt(position)
                     notifyItemRemoved(position)
                     notifyItemRangeChanged(position, menuList.size)
                 }
@@ -81,4 +85,3 @@ class MenuItemAdapter(
     }
 
 }
-

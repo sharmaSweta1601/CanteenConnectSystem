@@ -50,7 +50,7 @@ class PendingOrderAdapter(
                             order.orderAccepted = true
                             text = "Dispatch"
                             showTost("Order is accepted")
-                            updateOrderAcceptStatus(order.itemPushKey)
+                            updateOrderAcceptStatus(order.itemPushKey, order.userId)
                             pendingOrderList.removeAt(adapterPosition)
                             notifyItemRemoved(adapterPosition)
                         }
@@ -59,10 +59,20 @@ class PendingOrderAdapter(
             }
         }
         
-        private fun updateOrderAcceptStatus(pushKey: String?) {
+        private fun updateOrderAcceptStatus(pushKey: String?, userId: String?) {
             if (pushKey != null) {
                 val database = FirebaseDatabase.getInstance().reference
                 database.child("OrderDetails").child(pushKey).child("orderAccepted").setValue(true)
+                
+                // Send Notification
+                if (userId != null) {
+                    val notification = com.example.myapplication.model.NotificationModel(
+                        title = "Order Accepted",
+                        message = "Your order is being prepared!",
+                        timestamp = System.currentTimeMillis()
+                    )
+                    database.child("user").child(userId).child("notifications").push().setValue(notification)
+                }
             }
         }
         

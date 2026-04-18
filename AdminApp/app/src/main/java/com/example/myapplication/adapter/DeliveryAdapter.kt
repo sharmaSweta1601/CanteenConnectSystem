@@ -51,6 +51,18 @@ class DeliveryAdapter(
                             .addOnSuccessListener {
                                 order.paymentReceived = true
                                 notifyItemChanged(adapterPosition)
+                                
+                                // Send Notification
+                                if (order.userId != null) {
+                                    val notification = com.example.myapplication.model.NotificationModel(
+                                        title = "Order Delivered",
+                                        message = "Your order has been delivered successfully. Enjoy your meal!",
+                                        timestamp = System.currentTimeMillis()
+                                    )
+                                    FirebaseDatabase.getInstance().reference
+                                        .child("user").child(order.userId!!).child("notifications")
+                                        .push().setValue(notification)
+                                }
                             }
                     }
                 }
