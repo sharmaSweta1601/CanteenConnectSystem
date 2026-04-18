@@ -43,6 +43,11 @@ class HomeFragment : Fragment() {
             val bottomSheetDialog = MenuBottomSheetFragment()
             bottomSheetDialog.show(parentFragmentManager, "Test")
         }
+        
+        binding.notificationBell.setOnClickListener {
+            val bottomSheetDialog = NotificationBottomSheetFragment()
+            bottomSheetDialog.show(parentFragmentManager, "Notification")
+        }
 
         retrriveAndDisplayPopulerItems()
 
