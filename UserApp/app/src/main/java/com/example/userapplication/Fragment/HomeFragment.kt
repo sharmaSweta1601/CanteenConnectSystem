@@ -48,6 +48,10 @@ class HomeFragment : Fragment() {
             val bottomSheetDialog = NotificationBottomSheetFragment()
             bottomSheetDialog.show(parentFragmentManager, "Notification")
         }
+        
+        binding.homeSearchBar.setOnClickListener {
+            androidx.navigation.fragment.findNavController(this).navigate(R.id.searchFragment2)
+        }
 
         retrriveAndDisplayPopulerItems()
 
