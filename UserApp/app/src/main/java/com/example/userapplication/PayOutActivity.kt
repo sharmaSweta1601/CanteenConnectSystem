@@ -12,9 +12,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.razorpay.Checkout
+import com.razorpay.PaymentResultListener
+import org.json.JSONObject
 
-
-class PayOutActivity : AppCompatActivity() {
+class PayOutActivity : AppCompatActivity(), PaymentResultListener {
     private lateinit var binding: ActivityPayOutBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var name: String
@@ -32,6 +34,7 @@ class PayOutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPayOutBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Checkout.preload(applicationContext)
 
         auth = FirebaseAuth.getInstance()
         databaseReference = FirebaseDatabase.getInstance().getReference()
@@ -67,9 +70,7 @@ class PayOutActivity : AppCompatActivity() {
             } else {
                 val isOnline = binding.radioOnline.isChecked
                 if (isOnline) {
-                    Toast.makeText(this, "Processing Online Payment...", Toast.LENGTH_SHORT).show()
-                    // Simulate payment success after a delay or just proceed
-                    placeOrder()
+                    startPayment()
                 } else {
                     placeOrder()
                 }
@@ -78,6 +79,35 @@ class PayOutActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    private fun startPayment() {
+        val checkout = Checkout()
+        checkout.setKeyID("rzp_test_DummyKey123456") // Replace with actual API key
+
+        try {
+            val options = JSONObject()
+            options.put("name", "Canteen Connect")
+            options.put("description", "Order Payment")
+            val amountInt = calculateTotalAmount() * 100 // Amount in paise
+            options.put("amount", amountInt.toString())
+            options.put("currency", "INR")
+            options.put("prefill.contact", phone)
+            options.put("prefill.name", name)
+            
+            checkout.open(this, options)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error in payment: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onPaymentSuccess(razorpayPaymentID: String?) {
+        Toast.makeText(this, "Payment Successful!", Toast.LENGTH_SHORT).show()
+        placeOrder()
+    }
+
+    override fun onPaymentError(code: Int, response: String?) {
+        Toast.makeText(this, "Payment failed: $response", Toast.LENGTH_LONG).show()
     }
 
     private fun placeOrder() {
