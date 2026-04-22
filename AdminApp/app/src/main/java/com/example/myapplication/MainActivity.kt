@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, SendNotificationActivity::class.java)
             startActivity(intent)
         }
+        binding.notificationBell.setOnClickListener {
+            val bottomSheetDialog = NotificationBottomSheetFragment()
+            bottomSheetDialog.show(supportFragmentManager, "Test")
+        }
 
     }
 }

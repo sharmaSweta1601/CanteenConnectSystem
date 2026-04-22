@@ -104,10 +104,20 @@ class PayOutActivity : AppCompatActivity() {
             bottomSheetDialog.show(supportFragmentManager, "Test")
             removeItemFromCart()
             addOrderToHistory(orderDetails)
+            sendNotificationToAdmin(orderDetails)
         }
             .addOnFailureListener{
                 Toast.makeText(this,"Failed To Order",Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun sendNotificationToAdmin(orderDetails: OrderDetails) {
+        val notification = com.example.userapplication.model.NotificationModel(
+            title = "New Order Received",
+            message = "New order received from ${orderDetails.userName}",
+            timestamp = System.currentTimeMillis()
+        )
+        databaseReference.child("admin_notifications").push().setValue(notification)
     }
 
     private fun addOrderToHistory(orderDetails: OrderDetails) {
